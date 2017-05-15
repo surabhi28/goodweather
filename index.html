@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head> 
+	<title>GOOD WEATHER </title>
+	
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+    <script type="text/javascript">
+
+        var icons={
+        	"clear-day":"B",
+        	"clear-night":"C",
+        	"rain":"R",
+        	"snow":"G",
+        	"wind:":"S",
+        	"sleet":"X",
+        	"fog":"N",
+        	"cloudy":"Y",
+        	"partly-cloudy-day":"H",
+        	"partly-cloudy-night":"I"       
+        	};
+
+        var cities={
+        	"chicago" :{coords:{latitude:40.672060,longitude:-73.983898}},
+        	"new york" :{coords:{latitude:40.672060,longitude:-73.983898}},
+        	"miami" :{coords:{latitude:40.672060,longitude:-73.983898}},
+        	"san francisco" :{coords:{latitude:40.672060,longitude:-73.983898}},
+        	"los angeles" :{coords:{latitude:37.8267,longitude:-122.4233}},
+        	"current location" :""
+
+        };
+        function loadWeather(cityCoords){
+        	console.log(cityCoords);
+        	var latlng= cityCoords.coords.latitude + "," +cityCoords.coords.longitude;
+            var forecastURL="https://api.darksky.net/forecast/8562a9f315d24a3214a08cd9c0104432/"+latlng;
+
+            $.ajax({
+
+            	url:forecastURL,
+            	jsonpCallback :'jsonCallback',
+            	dataType:'jsonp',
+            	contentType:'application/json',
+            	success:function(json){
+            		console.log(json);
+            		$("#current_temp").html(json.currently.temperature+"&#176;F");
+            		$("#current_summary").html(json.currently.summary);
+            		$("#current_temp").attr("data-icon",icons[json.currently.icon]);
+            	},
+            	error:function(e){
+            		console.log(e.message);
+            	}
+
+
+            });
+        }
+
+        function loadCity(city){
+        	$("#location").html(city);
+        	loadWeather(cities[city.toLowerCase()]);
+
+        }
+
+        $(document).ready(function(){
+             loadWeather("Chicago");
+
+             $("a.city").bind("click",function(){
+                   loadCity($(this).html());
+             });
+        });
+
+    </script>
+</head>
+<body>
+
+    <div data-role="page">
+
+        <div data-role="panel" id="left-panel" data-theme="c"  >
+            <ul data-theme="d" data-role="listview">
+            	<li data-icon="delete"><a href="#" data-rel="close">close</a></li>
+            	<li data-role="list-divider">Select a city</li>
+            	    <li><a href="#" class="city" data-rel="close">Current Location</a></li>
+            	    <li><a href="#" class="city" data-rel="close">New York</a></li>
+            	    <li><a href="#" class="city" data-rel="close">Los Angeles</a></li>
+            	    <li><a href="#" class="city" data-rel="close">Chicago</a></li>
+            	    <li><a href="#" class="city" data-rel="close">Miami</a></li>
+            	    <li><a href="#" class="city" data-rel="close">San Francisco</a></li>
+            </ul>
+
+        </div><!-- /panel -->
+	    <div data-role="header" data-position="fixed">
+	    	<h1>GOOD WEATHER</h1>
+	    	<a href="#left-panel" data-role="button" data-icon="bars"  data-iconpos="notext"></a>
+	    </div>
+	    <div role="main" class="ui-content" class="content">
+	    	<h1 id="current_temp" class="icon" data-icon="B"></h1>
+	    	<p id="current_summary">Partly Cloudy</p>
+	    	<p id="location"></p>
+
+	    </div>
+	    
+    </div>
+
+</body>
+</html>
